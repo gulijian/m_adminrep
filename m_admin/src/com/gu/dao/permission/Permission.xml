@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gu.dao.permission.IPermissionMapper" >
+	<select id="findPermissionRoot" resultType="Permission" parameterType="Params">
+		SELECT
+			id ,
+			NAME as name,
+			url,
+			model
+		FROM
+			sys_permission
+		WHERE
+			is_delete = 0 and parent_id IS NULL;
+	</select>
+	
+	<select id="findPermissionChildren" resultType="Permission">
+		SELECT
+			id,
+			NAME as name,
+			url,
+			model
+		FROM
+			sys_permission
+		WHERE
+			is_delete = 0 and parent_id = #{id}
+	</select>
+	
+	
+	<select id="count" resultType="int" parameterType="Params">
+		SELECT
+			count(1) 
+		FROM
+			sys_permission 
+		<trim prefix="WHERE" prefixOverrides="AND | OR">  
+			<if test="@com.gu.util.GStringUtils@isNotEmpty(keyword)">
+				and name LIKE '%${keyword}%'
+			</if>
+		</trim>
+	</select>
+</mapper>
